@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador Trofeo Compuesto | SENA ADSO</title>
+  <style>
+    :root {
+      --fondo: #0f172a;
+      --tarjeta: #1e293b;
+      --tarjeta-clara: #334155;
+      --texto: #f8fafc;
+      --suave: #cbd5e1;
+      --acento: #38bdf8;
+      --verde: #10b981;
+      --naranja: #fb923c;
+      --borde: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--fondo);
+      color: var(--texto);
+      padding: 2rem 1rem;
+      line-height: 1.5;
+    }
+
+    .contenedor {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .etiqueta {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--acento);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 0.2rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.65rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .subtitulo {
+      color: var(--suave);
+      font-size: 0.95rem;
+    }
+
+    .rejilla {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.4rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .caja {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+      padding: 1.4rem;
+    }
+
+    .caja h2 {
+      font-size: 1.12rem;
+      color: var(--acento);
+      border-bottom: 1px solid var(--borde);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .formula {
+      background: var(--fondo);
+      border-left: 4px solid var(--acento);
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-family: 'Consolas', monospace;
+      margin-bottom: 0.9rem;
+    }
+
+    .formula.verde {
+      border-left-color: var(--verde);
+    }
+
+    .campos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--suave);
+      margin-bottom: 0.25rem;
+    }
+
+    input {
+      width: 100%;
+      background: var(--fondo);
+      color: var(--texto);
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      font-size: 0.95rem;
+    }
+
+    .pasos {
+      list-style: none;
+    }
+
+    .pasos li {
+      background: var(--tarjeta-clara);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .resultado {
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      margin-top: 0.7rem;
+    }
+
+    .resultado-principal {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #6ee7b7;
+    }
+
+    .resultado-detalle {
+      font-size: 0.9rem;
+      color: #ecfdf5;
+      margin-top: 0.3rem;
+    }
+
+    .figura-caja {
+      background: var(--fondo);
+      border-radius: 10px;
+      padding: 0.9rem;
+      display: flex;
+      justify-content: center;
+      margin-top: 0.6rem;
+    }
+
+    canvas {
+      width: 100%;
+      height: 255px;
+      background: var(--fondo);
+      border-radius: 10px;
+      margin-top: 0.6rem;
+    }
+
+    .mejoras-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 0.7rem;
+    }
+
+    .mejora-card {
+      background: var(--tarjeta-clara);
+      border-top: 3px solid var(--verde);
+      border-radius: 10px;
+      padding: 0.95rem;
+    }
+
+    .mejora-card h3 {
+      color: #6ee7b7;
+      font-size: 0.98rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .mejora-card p {
+      font-size: 0.88rem;
+      color: var(--suave);
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <span class="etiqueta">SENA · ADSO Ficha 3465955 · Evidencia GA2-240201528-AA2-EV01</span>
+      <h1>Trofeo Geométrico Compuesto: Área, Costos y Mejora</h1>
+      <p class="subtitulo">
+        Simulación interactiva de superficie total (A<sub>T</sub>), función lineal C(x), costo unitario promedio y ahorro con mejora de empaque y nesting.
+      </p>
+    </header>
+
+    <div class="rejilla">
+      <section class="caja">
+        <h2>1. Figura Geométrica Compuesta</h2>
+        <p class="subtitulo">
+          Pirámide cuadrangular regular superior (lado <strong>l</strong>, apotema <strong>a<sub>p</sub></strong>) + base cúbica inferior (lado <strong>l</strong>, altura <strong>h</strong>).
+        </p>
+        <div class="figura-caja">
+          <svg width="280" height="250" viewBox="0 0 280 250" xmlns="http://www.w3.org/2000/svg">
+            <!-- Pirámide -->
+            <polygon points="140,14 78,94 140,113" fill="#38bdf8" fill-opacity="0.35" stroke="#38bdf8" stroke-width="2" />
+            <polygon points="140,14 202,94 140,113" fill="#0284c7" fill-opacity="0.45" stroke="#38bdf8" stroke-width="2" />
+            <line x1="140" y1="14" x2="171" y2="103" stroke="#10b981" stroke-width="2" stroke-dasharray="4" />
+            <text x="178" y="64" fill="#6ee7b7" font-size="12" font-weight="bold">aₚ</text>
+
+            <!-- Cubo -->
+            <polygon points="78,126 140,146 140,218 78,198" fill="#fb923c" fill-opacity="0.35" stroke="#fb923c" stroke-width="2" />
+            <polygon points="202,126 140,146 140,218 202,198" fill="#ea580c" fill-opacity="0.45" stroke="#fb923c" stroke-width="2" />
+            <polygon points="140,108 202,126 140,146 78,126" fill="#fdba74" fill-opacity="0.25" stroke="#fb923c" stroke-width="2" />
+
+            <text x="86" y="232" fill="#f8fafc" font-size="12" font-weight="bold">Lado (l)</text>
+            <text x="210" y="176" fill="#fb923c" font-size="12" font-weight="bold">h</text>
+          </svg>
+        </div>
+      </section>
+
+      <section class="caja">
+        <h2>2. Área Total Superficial (A<sub>T</sub>)</h2>
+        <div class="formula">
+          <strong>A<sub>T</sub> = l² + 4(l · h) + 2(l · a<sub>p</sub>)</strong>
+        </div>
+
+        <div class="campos">
+          <div>
+            <label for="lado">Lado l (cm)</label>
+            <input type="number" id="lado" value="10" min="0" step="0.5" />
+          </div>
+          <div>
+            <label for="altura">Altura base h (cm)</label>
+            <input type="number" id="altura" value="8" min="0" step="0.5" />
+          </div>
+          <div>
+            <label for="apotema">Apotema a<sub>p</sub> (cm)</label>
+            <input type="number" id="apotema" value="14" min="0" step="0.5" />
+          </div>
+        </div>
+
+        <ul class="pasos" id="pasosArea"></ul>
+        <div class="resultado">
+          <div class="resultado-principal" id="totalArea"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="rejilla">
+      <section class="caja">
+        <h2>3. Función de Costos C(x) y Ahorro</h2>
+        <div class="formula verde">
+          <strong>C(x) = C<sub>f</sub> + C<sub>v</sub> · x</strong>
+        </div>
+<div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.85rem;">
+  <button type="button" onclick="aplicarEscenario('base')" style="background:#334155; color:#f8fafc; border:1px solid #64748b; border-radius:8px; padding:0.4rem 0.7rem; cursor:pointer; font-size:0.82rem;">
+    Caso base (x = 50)
+  </button>
+  <button type="button" onclick="aplicarEscenario('loteAlto')" style="background:#334155; color:#f8fafc; border:1px solid #64748b; border-radius:8px; padding:0.4rem 0.7rem; cursor:pointer; font-size:0.82rem;">
+    Lote ampliado (x = 150)
+  </button>
+  <button type="button" onclick="aplicarEscenario('mayorTamano')" style="background:#334155; color:#f8fafc; border:1px solid #64748b; border-radius:8px; padding:0.4rem 0.7rem; cursor:pointer; font-size:0.82rem;">
+    Mayor dimensión (l = 12)
+  </button>
+</div>
+        <div class="campos">
+          <div>
+            <label for="cf">Costo fijo C<sub>f</sub> ($ COP)</label>
+            <input type="number" id="cf" value="150000" min="0" step="10000" />
+          </div>
+          <div>
+            <label for="cv">Costo variable C<sub>v</sub> ($ COP)</label>
+            <input type="number" id="cv" value="28000" min="0" step="1000" />
+          </div>
+          <div>
+            <label for="cantidad">Unidades (x)</label>
+            <input type="number" id="cantidad" value="50" min="1" step="1" />
+          </div>
+        </div>
+
+        <ul class="pasos" id="pasosCostos"></ul>
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:0.65rem; margin-top:0.6rem;">
+  <div style="background:#0f172a; border:1px solid #38bdf8; border-radius:10px; padding:0.7rem;">
+    <div style="font-size:0.75rem; color:#94a3b8;">Costo unitario promedio (actual)</div>
+    <div id="kpiUnitarioPromedio" style="font-size:1.05rem; font-weight:700; color:#38bdf8;"></div>
+  </div>
+  <div style="background:#0f172a; border:1px solid #10b981; border-radius:10px; padding:0.7rem;">
+    <div style="font-size:0.75rem; color:#94a3b8;">Costo unitario promedio (mejora)</div>
+    <div id="kpiUnitarioMejorado" style="font-size:1.05rem; font-weight:700; color:#6ee7b7;"></div>
+  </div>
+  <div style="background:#0f172a; border:1px solid #10b981; border-radius:10px; padding:0.7rem;">
+    <div style="font-size:0.75rem; color:#94a3b8;">Ahorro total del lote</div>
+    <div id="kpiAhorroTotal" style="font-size:1.05rem; font-weight:700; color:#10b981;"></div>
+  </div>
+  <div style="background:#0f172a; border:1px solid #fb923c; border-radius:10px; padding:0.7rem;">
+    <div style="font-size:0.75rem; color:#94a3b8;">Ahorro por unidad</div>
+    <div id="kpiAhorroUnidad" style="font-size:1.05rem; font-weight:700; color:#fb923c;"></div>
+  </div>
+</div>
+        <div class="resultado">
+          <div class="resultado-principal" id="totalCostos"></div>
+          <div class="resultado-detalle" id="detalleCostos"></div>
+        </div>
+      </section>
+
+      <section class="caja">
+        <h2>4. Gráfica Comparativa de Costos</h2>
+        <p class="subtitulo">
+          Costo actual frente a la proyección con mejora (-22% en C<sub>v</sub>).
+        </p>
+        <canvas id="canvasCostos" width="500" height="255"></canvas>
+      </section>
+    </div>
+
+    <section class="caja">
+      <h2>5. Propuesta de Mejora Rentable</h2>
+      <section class="caja" style="margin-top: 1.4rem;">
+      <h2>6. Conclusión y Resolución General del Problema</h2>
+      <p class="subtitulo" style="margin-bottom: 0.75rem;">
+        Síntesis integral del modelo geométrico, financiero y de optimización para el trofeo compuesto:
+      </p>
+      <ul class="pasos">
+        <li>
+          <strong>Área superficial y materia prima:</strong> Con la ecuación A<sub>T</sub> = l<sup>2</sup> + 4lh + 2la<sub>p</sub>, para dimensiones base de l = 10 cm, h = 8 cm y a<sub>p</sub> = 14 cm se obtiene un área total de 700 cm<sup>2</sup> por trofeo, permitiendo estimar la lámina necesaria con menor desperdicio.
+        </li>
+        <li>
+          <strong>Función de costos y costo unitario:</strong> Bajo el modelo C(x) = C<sub>f</sub> + C<sub>v</sub> &times; x, con C<sub>f</sub> = $150.000 COP y C<sub>v</sub> = $28.000 COP en un lote de x = 50 unidades, el costo total asciende a $1.550.000 COP y el costo unitario promedio es de $31.000 COP.
+        </li>
+        <li>
+          <strong>Impacto de la mejora rentable:</strong> Sustituir la vitrina acrílica por un estuche de cartón microcorrugado con ventana de acetato, aplicar <em>nesting</em> en el corte láser y trabajar por lotes reduce el costo variable en un 22% (a $21.840 COP), generando un ahorro de $308.000 COP en el lote de 50 trofeos.
+        </li>
+      </ul>
+      <div class="resultado">
+        <div class="resultado-principal">
+          Resolución final: El diseño geométrico preciso y la optimización del empaque, el corte y los lotes hacen viable y más rentable la producción del trofeo.
+        </div>
+      </div>
+    </section>
+      <div class="mejoras-grid">
+        <div class="mejora-card">
+          <h3>Empaque de Cartón + Acetato</h3>
+          <p>Reemplaza la vitrina acrílica rígida por estuche de cartón microcorrugado con ventana de acetato reciclable.</p>
+        </div>
+        <div class="mejora-card">
+          <h3>Nesting y Lotes Estandarizados</h3>
+          <p>Optimiza el aprovechamiento de láminas en corte láser y distribuye mejor los costos fijos (C<sub>f</sub>) por lote.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
